@@ -55,12 +55,22 @@ public class Application {
     }
 
     private static void startWithExport() throws InterruptedException {
+        // init service config obj
         ServiceConfig<DemoServiceImpl> service = new ServiceConfig<>();
+        // set DemoService Interface in config
         service.setInterface(DemoService.class);
+        // set Ref is DemoServiceImpl
         service.setRef(new DemoServiceImpl());
+        // on distribute system, use application call the service; now application name is dubbo-demo-api-provider
         service.setApplication(new ApplicationConfig("dubbo-demo-api-provider"));
+        // all the microservice must use registry server to note service node info;
+        // now dubbo use zookeeper server provider
         service.setRegistry(new RegistryConfig("zookeeper://127.0.0.1:2181"));
+        // about metadata report server
         service.setMetadataReportConfig(new MetadataReportConfig("zookeeper://127.0.0.1:2181"));
+        // TODO I guess this is the important method, is a service runner
+        // when someone want call your service, they must use network call, this method can create
+        // a port to listen your service, when they call your service, can create a network
         service.export();
 
         System.out.println("dubbo service started");
